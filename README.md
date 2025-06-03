@@ -17,9 +17,11 @@ A terminal-based remake of *Five Nights at Freddy’s* (FNaF 1) written in Pytho
 1. **Clone the repository**
    ```bash
    git clone https://github.com/your-username/terminal-fnaf.git
-   cd terminal-fnaf
+   
 2. **Run the game (Python 3.8+ required)**
-
+   Run this command in your terminal:
+   ```bash
+   python {file directory]
 ---
 
 🖥 Supported Platforms
