@@ -27,7 +27,7 @@ Linux
 |The game auto-detects your platform and uses appropriate key input libraries.|
 
 🐞 Found a Bug or Issue?
-If you encounter a bug, glitch, or want to suggest improvements, please submit an issue on the GitHub Issues page.
+If you encounter a bug, glitch, or want to suggest improvements, please submit an issue on the GitHub Issues page.\n
 I welcome contributions, fixes, or feedback to make the game better! (please note I will be reviewing them personally to ensure functionality)
 
 📚 Credits
