@@ -96,19 +96,31 @@ power_drain_rates = {
 
 def draw_camera_view(camera_index):
     if random.randint(1, 20) == 1:
-        print("!! STATIC NOISE !!")
+        print("\033[1;31m!! STATIC NOISE !!\033[0m")
         print("▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉")
         print("▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉▉")
-        print("CAMERA SIGNAL LOST...")
-        time.sleep(1)
+        print("\033[1;33mCAMERA SIGNAL LOST...\033[0m")
+        time.sleep(0.8)
 
     room_name = camera_map.get(camera_index, "Uknown")
-    print(f"[CAM {camera_index}] {room_name}")
+    print(f"\033[1;36m[CAM {camera_index}] {room_name}\033[0m")
     print("-"*30)
 
     frame = []
 
+    bonnie_here = (camera_index == bonnie_path[bonnie_pos]) if bonnie_pos < len(bonnie_path) else False
+    chica_here = (camera_index == chica_path[chica_pos]) if chica_pos < len(chica_path) else False
+    freddy_here = (camera_index == freddy_path[freddy_pos]) if freddy_pos < len(freddy_path) else False
+
     if camera_index == 0:  # Show Stage
+        anims = []
+        if bonnie_here:
+            anims.append("Bonnie 🎸")
+        if freddy_here:
+            anims.append("Freddy 🎤")
+        if chica_here:
+            anims.append("Chica 🍕")
+        anim_str = "    ". join(anims) if anims else "  "
         frame = [
             "| 🎭🎭🎭  Show Stage 🎭🎭🎭 |",
             "|                         |",
@@ -157,6 +169,7 @@ def draw_camera_view(camera_index):
             "|                         |"
         ]
     elif camera_index == 6:  # West Hall Corner
+        anim = "🐰" if bonnie_here else "   "
         frame = [
             "|                         |",
             "|    Light flickering     |",
@@ -204,19 +217,34 @@ def draw_camera_view(camera_index):
     print("-" * 30)
 
 def draw_office_view(current_hour, power, left_door, right_door):
+
+    def draw_power_bar(power:float, length: int = 20) -> str:
+        filled_length = int(length * power / 100)
+        bar = "#" * filled_length + "-" * (length - filled_length)
+        return f"[{bar}]"
+
+    power_bar_length = 30
+    power_units = int((power / 100.0) * power_bar_length)
+    power_bar = "[" + "#" * power_units + "-" * (power_bar_length - power_units) + "]"
+
     print("------ YOUR OFFICE ------")
-    print("Power: {}%  | Time: {}AM".format(power, current_hour))
+    print("Power: {power_bar} {power:.1f}%  | Time: {current_hour}AM".format(
+        power_bar=draw_power_bar(power), 
+        power=power, 
+        current_hour=current_hour
+    ))
     print()
 
-    left_status = "[CLOSED]" if left_door else "[OPEN]"
-    right_status = "[CLOSED]" if right_door else "[OPEN]"
-    left_lstatus = "[ON]" if left_light else "[OFF]"
-    right_lstatus = "[ON]" if right_light else "[OFF]"
+    def door_status(is_closed):
+        return "\033[1;31m[CLOSED]\033[0m" if is_closed else "\033[1;32m[OPEN]\033[0m"
+
+    def light_status(is_on):
+        return "\033[1;33m[ON]\033[0m" if is_on else "\033[0;37m[OFF]\033[0m"
 
     print("   ┌────────────┐    ┌────────────┐")
-    print(f"   │  LEFT DOOR │    │ RIGHT DOOR│")
-    print(f"   │   {left_status:<8}│    │   {right_status:<8}│")
-    print(f"    |   {left_lstatus}|    |   {right_lstatus}")
+    print(f"   │  LEFT DOOR │    │ RIGHT DOOR │")
+    print(f"   │    {door_status(left_door):<9} │       │    {door_status(right_door):<9} │")
+    print(f"   │  Light: {light_status(left_light):<5} │       │  Light: {light_status(right_light):<5} │")
     print("   └────────────┘    └────────────┘")
     print()
 
@@ -231,27 +259,29 @@ def show_menu():
     clear_screen()
     print("=== FIVE NIGHTS AT FREDDY'S - TERMINAL EDITION ===\n")
     print("=== DEVELOPED BY MATHEW DIXON ===\n")
-    print("1. Play")
-    print("2. Quit\n")
-    while True: 
-        choice = get_key()
-        if choice == '1':
-            return True
-        elif choice == '2' or choice == 'q':
-            return False
+    print("Select Night to Play (1-7):")
+    print("q. Quit\n")
+    selected_night = None
+    while selected_night is None:
+        key = get_key()
+        if key in [str(i) for i in range(1, 8)]:
+            selected_night = int(key)
+        elif key in ['q']:
+            return None
         time.sleep(0.1)
+    return selected_night
 
 def show_game_over():
     clear_screen()
     print("=== GAME OVER ===")
     print("You ran out of power\n")
     print("1. Retry Night")
-    print("2. Quit\n")
+    print("q. Quit\n")
     while True: 
         choice = get_key()
         if choice == '1':
             return True
-        elif choice == '2' or choice == 'q':
+        elif choice == 'q':
             return False
         time.sleep(0.1) 
 
@@ -277,16 +307,6 @@ def reset_game_state():
 
 def render_ui():
     clear_screen()
-
-    ld_status = "OPEN" if left_door else "CLOSED"
-    ll_status = "ON" if left_light else "OFF"
-    rd_status = "OPEN" if right_door else "CLOSED"
-    rl_status = "ON" if right_light else "OFF"
-    power_display = f"{power:.1f}%"
-
-    cam_bonnie = bonnie_path[bonnie_pos]
-    cam_chica = chica_path[chica_pos]
-
     if not camera_mode:
         # Office view
         draw_office_view(current_hour, power, left_door, right_door)
@@ -316,6 +336,9 @@ def game_loop():
     global left_door, left_light, right_door, right_light
     global camera_mode, camera_index, power
     global foxy_stage, freddy_waiting
+
+    current_hour = 12
+    power = 100.0
 
     FPS = 60
     frame_duration = 1.0 / FPS
@@ -402,12 +425,16 @@ def game_loop():
 
             if current_hour >= 2 or power < 50:
                 if should_attempt_move(freddy_last_move):
-                    if random.randint(1, 20) <= freddy_ai:
-                        if not right_door:
-                            if freddy_pos < len(freddy_path) - 1:
-                                freddy_pos += 1
-                            else:
+                    chance = random.randint(1, 20)
+                    if chance <= freddy_ai:
+                        if freddy_pos < len(freddy_path) - 1:
+                            freddy_pos +=1
+                            freddy_waiting = False
+                        else:
+                            if not right_door:
                                 freddy_waiting = True
+                            else:
+                                freddy_waiting = False
                         freddy_last_move = time.time()
             
             if freddy_waiting:
@@ -500,7 +527,9 @@ def game_loop():
         print("Game exited cleanly.")
 
 if __name__ == "__main__":
-    if show_menu():
+    night_choice = show_menu()
+    if night is not None:
+        set_ai_levels(night_choice)
         if os.name != 'nt':
             import tty
             import termios
