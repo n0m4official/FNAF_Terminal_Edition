@@ -20,19 +20,36 @@ A terminal-based remake of *Five Nights at Freddy’s* (FNaF 1) written in Pytho
    cd terminal-fnaf
 2. **Run the game (Python 3.8+ required)**
 
+---
+
 🖥 Supported Platforms
+
 Windows
+
 macOS
+
 Linux
+
 |The game auto-detects your platform and uses appropriate key input libraries.|
 
+---
+
 🐞 Found a Bug or Issue?
-If you encounter a bug, glitch, or want to suggest improvements, please submit an issue on the GitHub Issues page.\n
+
+If you encounter a bug, glitch, or want to suggest improvements, please submit an issue on the GitHub Issues page.
+
 I welcome contributions, fixes, or feedback to make the game better! (please note I will be reviewing them personally to ensure functionality)
 
+---
+
 📚 Credits
+
 Inspired by Five Nights at Freddy’s by Scott Cawthon
+
 Built with ❤️ in Python for educational and entertainment purposes
 
+---
+
 ⚠️ Disclaimer
+
 This project is a fan-made recreation and is not affiliated with or endorsed by Scott Cawthon or the official FNaF franchise. All rights to the original game content belong to their respective owners.
