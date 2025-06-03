@@ -21,7 +21,7 @@ A terminal-based remake of *Five Nights at Freddy’s* (FNaF 1) written in Pytho
 2. **Run the game (Python 3.8+ required)**
    Run this command in your terminal:
    ```bash
-   python {file directory]
+   python <file path>
 ---
 
 🖥 Supported Platforms
